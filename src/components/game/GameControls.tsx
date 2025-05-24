@@ -1,4 +1,3 @@
-import React from "react";
 import { Play, Pause, RotateCcw } from "lucide-react";
 import { useGame } from "@/context/GameContext";
 import { Button } from "@/components/ui";
