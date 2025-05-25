@@ -6,19 +6,37 @@ import {
   GameControls,
   GameInfo,
   MobileControls,
-  GameOverModal
+  GameOverModal,
+  PlayerNameModal,
+  RankingSuccessModal
 } from "@/components/game";
 import { Footer } from "@/components/Footer";
 
 export function GamePage(): JSX.Element {
-  const { changeDirection, pauseGame, restartGame, isPlaying } = useGame();
+  const {
+    changeDirection,
+    pauseGame,
+    restartGame,
+    startGame,
+    isPlaying,
+    isGameOver,
+    score,
+    pendingRankingResult,
+    showPlayerNameModal,
+    showRankingSuccessModal,
+    submitPlayerScore,
+    skipRanking,
+    closeRankingSuccess
+  } = useGame();
   const { t } = useI18n();
 
   useKeyboard({
     onDirectionChange: changeDirection,
     onPause: pauseGame,
     onRestart: restartGame,
-    isPlaying
+    onStart: startGame,
+    isPlaying,
+    isGameOver
   });
 
   return (
@@ -48,6 +66,19 @@ export function GamePage(): JSX.Element {
         </div>
 
         <GameOverModal />
+
+        <PlayerNameModal
+          isOpen={showPlayerNameModal}
+          onSubmit={submitPlayerScore}
+          onSkip={skipRanking}
+          score={score}
+        />
+
+        <RankingSuccessModal
+          isOpen={showRankingSuccessModal}
+          onClose={closeRankingSuccess}
+          result={pendingRankingResult}
+        />
       </div>
 
       <Footer />

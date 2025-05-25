@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Settings } from "lucide-react";
+import { Settings, Trophy } from "lucide-react";
 import { useGameSettings } from "@/context/GameSettingsContext";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/context/I18nContext";
 import { LANGUAGE_FLAGS, LANGUAGE_NAMES } from "@/constants";
 import { GAME_MODES, type Difficulty } from "@/types/gameSettings";
 import { Modal } from "@/components/ui";
+import { RankingsModal } from "@/components/game";
 import "./GameSettingsSelector.css";
 
 export const GameSettingsSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showRankings, setShowRankings] = useState(false);
   const { settings, updateMode, updateDifficulty } = useGameSettings();
   const { currentTheme, changeTheme, availableThemes, themes } = useTheme();
   const { language, changeLanguage, t, availableLanguages } = useI18n();
@@ -72,6 +74,41 @@ export const GameSettingsSelector: React.FC = () => {
 
   return (
     <>
+      {/* Botão de Rankings */}
+      <button
+        className="settings-button"
+        onClick={() => setShowRankings(true)}
+        style={{
+          position: "fixed",
+          top: "20px",
+          right: "80px",
+          backgroundColor: "var(--color-background)",
+          color: "var(--color-text)",
+          border: `2px solid var(--color-accent)`,
+          borderRadius: "50%",
+          width: "50px",
+          height: "50px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          transition: "all 0.3s ease",
+          zIndex: 10
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "var(--color-accent)";
+          e.currentTarget.style.color = "var(--color-background)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "var(--color-background)";
+          e.currentTarget.style.color = "var(--color-text)";
+        }}
+        title={t("rankings.title")}
+      >
+        <Trophy className="w-6 h-6" />
+      </button>
+
+      {/* Botão de Configurações */}
       <button
         className="settings-button"
         onClick={() => setIsOpen(true)}
@@ -104,6 +141,7 @@ export const GameSettingsSelector: React.FC = () => {
         <Settings className="w-6 h-6" />
       </button>
 
+      {/* Modais */}
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
@@ -303,6 +341,11 @@ export const GameSettingsSelector: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      <RankingsModal
+        isOpen={showRankings}
+        onClose={() => setShowRankings(false)}
+      />
     </>
   );
 };

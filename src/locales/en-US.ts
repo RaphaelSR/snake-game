@@ -4,7 +4,7 @@ export const enUS: Translations = {
   game: {
     title: "Snake Game",
     instructions:
-      "Use arrow keys or WASD to move • Space to pause • R to restart",
+      "Use arrow keys or WASD to move • Space to pause/start • R to restart",
     score: "Score",
     highScore: "High Score",
     time: "Time",
@@ -69,5 +69,31 @@ export const enUS: Translations = {
     madeBy: "Made by",
     openSource: "Open source",
     viewOnGitHub: "View on GitHub"
+  },
+  rankings: {
+    title: "Rankings",
+    enterName: "Enter your name",
+    playerName: "Player name",
+    namePlaceholder: "Enter your name",
+    defaultPlayerName: "Anonymous",
+    characters: "characters",
+    invalidName: "Name must be between 2 and 20 characters",
+    qualifiedForRanking: "You qualified for the ranking!",
+    submit: "Submit",
+    skip: "Skip",
+    empty: "No rankings found",
+    loadAll: "Load all rankings",
+    success: {
+      title: "🎉 Congratulations!",
+      general: "You made it to the ranking!",
+      firstPlace: "🥇 You achieved 1st place!",
+      topThree: "🏆 You got {rank} place!",
+      topTen: "⭐ You got {rank} place!",
+      improved: "Improved from {oldRank} to {newRank} place!"
+    }
+  },
+  common: {
+    loading: "Loading...",
+    continue: "Continue"
   }
 };

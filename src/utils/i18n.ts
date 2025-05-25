@@ -1,22 +1,34 @@
 import type { Language } from "@/constants";
-import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from "@/constants";
+import { SUPPORTED_LANGUAGES } from "@/constants";
 
 export function detectUserLanguage(): Language {
-  const browserLang = navigator.language;
+  const browserLang = navigator.language.toLowerCase();
 
-  const supportedLang = SUPPORTED_LANGUAGES.find((lang) =>
-    browserLang.startsWith(lang.split("-")[0])
-  );
-
-  if (supportedLang) {
-    return supportedLang;
+  for (const lang of SUPPORTED_LANGUAGES) {
+    if (browserLang.startsWith(lang.toLowerCase())) {
+      return lang;
+    }
   }
 
-  return DEFAULT_LANGUAGE;
+  return "en-US";
 }
 
-export function getNestedValue(obj: any, path: string): string {
-  return path.split(".").reduce((current, key) => {
-    return current && current[key] !== undefined ? current[key] : path;
-  }, obj);
+export function getNestedValue(
+  obj: any,
+  path: string,
+  params?: Record<string, any>
+): string {
+  const value = path.split(".").reduce((current, key) => current?.[key], obj);
+
+  if (typeof value !== "string") {
+    return path;
+  }
+
+  if (!params) {
+    return value;
+  }
+
+  return Object.entries(params).reduce((result, [key, val]) => {
+    return result.replace(new RegExp(`{${key}}`, "g"), String(val));
+  }, value);
 }

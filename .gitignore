@@ -46,3 +46,15 @@ coverage/
 
 tmp/
 temp/
+
+firebase.json
+firestore.rules
+firestore.indexes.json
+.firebaserc
+.firebase/
+
+.env
+.env.local
+.env.production
+.env.development
+.firebase/

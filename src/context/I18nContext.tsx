@@ -35,8 +35,8 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const t = useCallback(
-    (key: string): string => {
-      const translation = getNestedValue(translations[language], key);
+    (key: string, params?: Record<string, any>): string => {
+      const translation = getNestedValue(translations[language], key, params);
       return translation || key;
     },
     [language]

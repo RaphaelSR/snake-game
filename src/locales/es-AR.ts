@@ -4,7 +4,7 @@ export const esAR: Translations = {
   game: {
     title: "Snake Game",
     instructions:
-      "Usa las flechas o WASD para mover • Espacio para pausar • R para reiniciar",
+      "Usa las flechas o WASD para mover • Espacio para pausar/iniciar • R para reiniciar",
     score: "Puntuación",
     highScore: "Récord",
     time: "Tiempo",
@@ -69,5 +69,31 @@ export const esAR: Translations = {
     madeBy: "Hecho por",
     openSource: "Código abierto",
     viewOnGitHub: "Ver en GitHub"
+  },
+  rankings: {
+    title: "Rankings",
+    enterName: "Ingresa tu nombre",
+    playerName: "Nombre del jugador",
+    namePlaceholder: "Ingresa tu nombre",
+    defaultPlayerName: "Anónimo",
+    characters: "caracteres",
+    invalidName: "El nombre debe tener entre 2 y 20 caracteres",
+    qualifiedForRanking: "¡Te clasificaste para el ranking!",
+    submit: "Enviar",
+    skip: "Saltar",
+    empty: "No se encontraron rankings",
+    loadAll: "Cargar todos los rankings",
+    success: {
+      title: "🎉 ¡Felicitaciones!",
+      general: "¡Entraste al ranking!",
+      firstPlace: "🥇 ¡Conseguiste el 1er lugar!",
+      topThree: "🏆 ¡Quedaste en {rank}º lugar!",
+      topTen: "⭐ ¡Quedaste en {rank}º lugar!",
+      improved: "¡Subiste del {oldRank}º al {newRank}º lugar!"
+    }
+  },
+  common: {
+    loading: "Cargando...",
+    continue: "Continuar"
   }
 };

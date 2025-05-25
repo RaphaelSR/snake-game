@@ -3,7 +3,7 @@ import type { Language } from "@/constants";
 export interface I18nContextType {
   language: Language;
   changeLanguage: (language: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, any>) => string;
   availableLanguages: Language[];
 }
 
@@ -75,5 +75,31 @@ export interface Translations {
     madeBy: string;
     openSource: string;
     viewOnGitHub: string;
+  };
+  rankings: {
+    title: string;
+    enterName: string;
+    playerName: string;
+    namePlaceholder: string;
+    defaultPlayerName: string;
+    characters: string;
+    invalidName: string;
+    qualifiedForRanking: string;
+    submit: string;
+    skip: string;
+    empty: string;
+    loadAll: string;
+    success: {
+      title: string;
+      general: string;
+      firstPlace: string;
+      topThree: string;
+      topTen: string;
+      improved: string;
+    };
+  };
+  common: {
+    loading: string;
+    continue: string;
   };
 }

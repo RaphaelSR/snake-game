@@ -5,54 +5,94 @@ interface UseKeyboardProps {
   onDirectionChange: (direction: Direction) => void;
   onPause: () => void;
   onRestart: () => void;
+  onStart?: () => void;
   isPlaying: boolean;
+  isGameOver?: boolean;
 }
-
-const KEY_MAPPINGS = {
-  movement: {
-    UP: ["ArrowUp", "w", "W"],
-    DOWN: ["ArrowDown", "s", "S"],
-    LEFT: ["ArrowLeft", "a", "A"],
-    RIGHT: ["ArrowRight", "d", "D"]
-  },
-  actions: {
-    pause: [" "],
-    restart: ["r", "R"]
-  }
-} as const;
 
 export function useKeyboard({
   onDirectionChange,
   onPause,
   onRestart,
-  isPlaying
-}: UseKeyboardProps): void {
+  onStart,
+  isPlaying,
+  isGameOver
+}: UseKeyboardProps) {
   useEffect(() => {
-    function handleKeyPress(event: KeyboardEvent): void {
-      event.preventDefault();
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Verificar se o foco está em um input ou textarea
+      const activeElement = document.activeElement;
+      const isInputFocused =
+        activeElement?.tagName === "INPUT" ||
+        activeElement?.tagName === "TEXTAREA" ||
+        activeElement?.contentEditable === "true";
 
-      for (const [direction, keys] of Object.entries(KEY_MAPPINGS.movement) as [
-        Direction,
-        readonly string[]
-      ][]) {
-        if (keys.includes(event.key)) {
-          onDirectionChange(direction as Direction);
-          return;
+      // Se um input estiver focado, não processar teclas do jogo
+      if (isInputFocused) {
+        return;
+      }
+
+      // Prevenir comportamento padrão apenas para teclas do jogo
+      const gameKeys = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "KeyW",
+        "KeyA",
+        "KeyS",
+        "KeyD",
+        "Space",
+        "KeyR"
+      ];
+
+      if (gameKeys.includes(event.code)) {
+        event.preventDefault();
+      }
+
+      // Controles de direção (apenas quando jogando)
+      if (isPlaying) {
+        switch (event.code) {
+          case "ArrowUp":
+          case "KeyW":
+            onDirectionChange("UP");
+            break;
+          case "ArrowDown":
+          case "KeyS":
+            onDirectionChange("DOWN");
+            break;
+          case "ArrowLeft":
+          case "KeyA":
+            onDirectionChange("LEFT");
+            break;
+          case "ArrowRight":
+          case "KeyD":
+            onDirectionChange("RIGHT");
+            break;
         }
       }
 
-      if (KEY_MAPPINGS.actions.pause.includes(event.key as " ") && isPlaying) {
-        onPause();
-        return;
+      // Controles de jogo (sempre disponíveis)
+      switch (event.code) {
+        case "Space":
+          if (isGameOver) {
+            onRestart();
+          } else if (isPlaying) {
+            onPause();
+          } else if (onStart) {
+            onStart();
+          }
+          break;
+        case "KeyR":
+          onRestart();
+          break;
       }
+    };
 
-      if (KEY_MAPPINGS.actions.restart.includes(event.key as "r" | "R")) {
-        onRestart();
-        return;
-      }
-    }
+    document.addEventListener("keydown", handleKeyPress);
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [onDirectionChange, onPause, onRestart, isPlaying]);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [onDirectionChange, onPause, onRestart, onStart, isPlaying, isGameOver]);
 }
