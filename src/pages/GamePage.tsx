@@ -8,6 +8,7 @@ import {
   MobileControls,
   GameOverModal
 } from "@/components/game";
+import { Footer } from "@/components/Footer";
 
 export function GamePage(): JSX.Element {
   const { changeDirection, pauseGame, restartGame, isPlaying } = useGame();
@@ -22,10 +23,10 @@ export function GamePage(): JSX.Element {
 
   return (
     <div
-      className="min-h-screen py-8 px-4"
+      className="min-h-screen py-8 px-4 flex flex-col"
       style={{ backgroundColor: "var(--color-background)" }}
     >
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto flex-grow">
         <header className="text-center mb-8">
           <h1
             className="text-4xl font-bold mb-2"
@@ -48,6 +49,8 @@ export function GamePage(): JSX.Element {
 
         <GameOverModal />
       </div>
+
+      <Footer />
     </div>
   );
 }

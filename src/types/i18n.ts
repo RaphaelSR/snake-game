@@ -71,4 +71,9 @@ export interface Translations {
     theme: string;
     language: string;
   };
+  footer: {
+    madeBy: string;
+    openSource: string;
+    viewOnGitHub: string;
+  };
 }

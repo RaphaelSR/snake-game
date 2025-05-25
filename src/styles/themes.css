@@ -393,3 +393,42 @@ button:hover {
     0 0 20px var(--color-accent),
     inset 0 0 20px rgba(0, 0, 0, 0.1);
 }
+
+footer {
+  background: transparent !important;
+  border-color: var(--color-grid) !important;
+}
+
+footer a {
+  color: var(--color-accent) !important;
+  transition: color 0.3s ease !important;
+}
+
+footer a:hover {
+  color: var(--color-text) !important;
+}
+
+.theme-retro footer {
+  font-family: 'Courier New', monospace !important;
+}
+
+.theme-retro footer a {
+  text-shadow: 0 0 5px var(--color-accent) !important;
+}
+
+.theme-retro footer a:hover {
+  text-shadow: 0 0 8px var(--color-accent) !important;
+}
+
+.theme-glow footer a:hover {
+  text-shadow: 0 0 10px var(--color-accent) !important;
+}
+
+.theme-neon footer {
+  border-color: var(--color-accent) !important;
+  border-opacity: 0.3 !important;
+}
+
+.theme-neon footer a {
+  text-shadow: 0 0 5px var(--color-accent) !important;
+}

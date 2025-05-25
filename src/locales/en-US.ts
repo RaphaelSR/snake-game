@@ -64,5 +64,10 @@ export const enUS: Translations = {
     difficulty: "Difficulty",
     theme: "Visual Theme",
     language: "Language"
+  },
+  footer: {
+    madeBy: "Made by",
+    openSource: "Open source",
+    viewOnGitHub: "View on GitHub"
   }
 };
