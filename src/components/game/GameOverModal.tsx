@@ -9,13 +9,23 @@ export function GameOverModal(): JSX.Element {
   return (
     <Modal isOpen={isGameOver} onClose={restartGame} title="Game Over">
       <div className="text-center space-y-4">
-        <div className="text-3xl font-bold text-gray-900">{score}</div>
+        <div
+          className="text-3xl font-bold"
+          style={{ color: "var(--color-text)" }}
+        >
+          {score}
+        </div>
 
         {isNewHighScore && (
-          <div className="text-green-600 font-semibold">New High Score! 🎉</div>
+          <div
+            className="font-semibold"
+            style={{ color: "var(--color-accent)" }}
+          >
+            New High Score! 🎉
+          </div>
         )}
 
-        <div className="text-gray-600">
+        <div style={{ color: "var(--color-text)" }}>
           High Score: <span className="font-semibold">{highScore}</span>
         </div>
 

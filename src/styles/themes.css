@@ -1,0 +1,320 @@
+:root {
+  --color-background: #f0f0f0;
+  --color-snake: #4CAF50;
+  --color-food: #FF5722;
+  --color-grid: #ddd;
+  --color-text: #333;
+  --color-accent: #2196F3;
+}
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.min-h-screen {
+  background: var(--color-background) !important;
+}
+
+.bg-gradient-to-br {
+  background: var(--color-background) !important;
+}
+
+.max-w-2xl {
+  background-color: transparent !important;
+}
+
+.game-container,
+.game-wrapper,
+.game-area,
+.game-board,
+.board,
+canvas,
+#game-canvas {
+  background-color: var(--color-background) !important;
+  border-color: var(--color-grid) !important;
+}
+
+.game-board,
+.aspect-square {
+  background-color: var(--color-background) !important;
+  border-color: var(--color-grid) !important;
+}
+
+.bg-gray-100 {
+  background-color: var(--color-background) !important;
+}
+
+.bg-gray-50 {
+  background-color: var(--color-grid) !important;
+}
+
+.bg-green-600 {
+  background-color: var(--color-snake) !important;
+}
+
+.bg-green-400 {
+  background-color: var(--color-snake) !important;
+}
+
+.bg-red-500 {
+  background-color: var(--color-food) !important;
+}
+
+.border-gray-200 {
+  border-color: var(--color-grid) !important;
+}
+
+.text-gray-900,
+.text-gray-600,
+.text-2xl,
+.text-4xl {
+  color: var(--color-text) !important;
+}
+
+.text-blue-600 {
+  color: var(--color-accent) !important;
+}
+
+canvas {
+  background: var(--color-background) !important;
+}
+
+.snake,
+.snake-segment,
+.snake-head,
+.snake-body {
+  background-color: var(--color-snake) !important;
+  fill: var(--color-snake) !important;
+}
+
+.snake-segment {
+  background-color: var(--color-snake);
+}
+
+.food,
+.food-item,
+.apple {
+  background-color: var(--color-food) !important;
+  fill: var(--color-food) !important;
+}
+
+.food-item {
+  background-color: var(--color-food);
+}
+
+.score,
+.game-score,
+.points,
+.high-score,
+h1, h2, h3, h4, h5, h6,
+p, span, div {
+  color: var(--color-text);
+}
+
+.score,
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text) !important;
+}
+
+button,
+.button,
+.btn {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  border: 2px solid var(--color-accent);
+  transition: all 0.3s ease;
+}
+
+button:hover,
+.button:hover,
+.btn:hover {
+  background-color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+button {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  border-color: var(--color-accent);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--color-text);
+  border-color: var(--color-text);
+}
+
+.bg-blue-600 {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  border: 2px solid var(--color-accent) !important;
+}
+
+.bg-blue-600:hover,
+.hover\:bg-blue-700:hover {
+  background-color: var(--color-accent) !important;
+  color: var(--color-background) !important;
+}
+
+.bg-gray-200 {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  border: 2px solid var(--color-text) !important;
+}
+
+.bg-gray-200:hover,
+.hover\:bg-gray-300:hover {
+  background-color: var(--color-text) !important;
+  color: var(--color-background) !important;
+}
+
+.bg-gray-200.touch-manipulation {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  border: 2px solid var(--color-grid) !important;
+}
+
+.bg-gray-200.touch-manipulation:hover {
+  background-color: var(--color-grid) !important;
+  color: var(--color-text) !important;
+}
+
+.grid-line {
+  stroke: var(--color-grid) !important;
+}
+
+.theme-retro,
+.theme-glow {
+  background-color: var(--color-background);
+}
+
+.theme-retro .game-board,
+.theme-retro canvas,
+.theme-glow .game-board,
+.theme-glow canvas {
+  box-shadow: 0 0 20px var(--color-accent);
+  border: 2px solid var(--color-accent);
+}
+
+.theme-retro .score,
+.theme-retro h1, .theme-retro h2, .theme-retro h3,
+.theme-glow .score,
+.theme-glow h1, .theme-glow h2, .theme-glow h3 {
+  text-shadow: 0 0 10px var(--color-accent);
+  color: var(--color-text);
+}
+
+.theme-retro button:hover,
+.theme-glow button:hover {
+  box-shadow: 0 0 15px var(--color-accent);
+}
+
+.theme-glow {
+  background-color: var(--color-background);
+}
+
+.theme-glow .game-board,
+.theme-glow canvas,
+.theme-glow .aspect-square {
+  box-shadow: 0 0 20px var(--color-accent);
+}
+
+.theme-glow .score,
+.theme-glow .text-4xl,
+.theme-glow h1,
+.theme-glow h2,
+.theme-glow h3 {
+  text-shadow: 0 0 10px var(--color-accent);
+}
+
+.theme-glow button:hover {
+  box-shadow: 0 0 15px var(--color-accent);
+}
+
+.theme-pixelated,
+.theme-pixelated * {
+  font-family: 'Courier New', monospace !important;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.theme-pixelated canvas {
+  image-rendering: pixelated !important;
+}
+
+.theme-pixelated {
+  font-family: 'Courier New', monospace;
+}
+
+.theme-pixelated canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.theme-pixelated * {
+  font-family: 'Courier New', monospace !important;
+}
+
+.theme-neon {
+  background: radial-gradient(circle, var(--color-background) 0%, #000 100%) !important;
+}
+
+.theme-neon .game-board,
+.theme-neon canvas,
+.theme-neon .aspect-square {
+  border: 2px solid var(--color-accent);
+  box-shadow: 
+    0 0 10px var(--color-accent),
+    inset 0 0 10px var(--color-accent);
+}
+
+.theme-neon .score,
+.theme-neon h1,
+.theme-neon h2,
+.theme-neon h3 {
+  color: var(--color-accent) !important;
+  text-shadow: 
+    0 0 5px var(--color-accent),
+    0 0 10px var(--color-accent),
+    0 0 15px var(--color-accent);
+}
+
+.fixed.inset-0 {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.bg-white {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+}
+
+.text-green-600 {
+  color: var(--color-accent) !important;
+}
+
+.text-gray-400 {
+  color: var(--color-text) !important;
+  background: transparent !important;
+}
+
+.hover\:text-gray-600:hover {
+  color: var(--color-accent) !important;
+}
+
+.theme-glow .fixed .relative {
+  box-shadow: 0 0 30px var(--color-accent);
+}
+
+.theme-neon .fixed .relative {
+  box-shadow: 
+    0 0 20px var(--color-accent),
+    inset 0 0 20px rgba(0, 0, 0, 0.1);
+}

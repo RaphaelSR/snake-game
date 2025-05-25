@@ -11,26 +11,34 @@ export function GameBoard(): JSX.Element {
       .some((segment) => segment.x === x && segment.y === y);
     const isFood = food.x === x && food.y === y;
 
-    let cellClass = "w-full h-full border border-gray-200";
+    let cellStyle: React.CSSProperties = {
+      width: "100%",
+      height: "100%",
+      border: `1px solid var(--color-grid)`,
+      backgroundColor: "var(--color-background)"
+    };
 
-    if (isSnakeHead) {
-      cellClass += " bg-green-600";
-    } else if (isSnakeBody) {
-      cellClass += " bg-green-400";
+    if (isSnakeHead || isSnakeBody) {
+      cellStyle.backgroundColor = "var(--color-snake)";
     } else if (isFood) {
-      cellClass += " bg-red-500 rounded-full";
-    } else {
-      cellClass += " bg-gray-50";
+      cellStyle.backgroundColor = "var(--color-food)";
+      cellStyle.borderRadius = "50%";
     }
 
-    return <div key={`${x}-${y}`} className={cellClass} />;
+    return <div key={`${x}-${y}`} style={cellStyle} />;
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto aspect-square bg-gray-100 p-2 rounded-lg shadow-lg">
+    <div
+      className="w-full max-w-lg mx-auto aspect-square p-2 rounded-lg shadow-lg"
+      style={{ backgroundColor: "var(--color-background)" }}
+    >
       <div
         className="grid gap-px h-full w-full"
-        style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)` }}
+        style={{
+          gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+          backgroundColor: "var(--color-grid)"
+        }}
       >
         {Array.from({ length: GRID_SIZE }, (_, y) =>
           Array.from({ length: GRID_SIZE }, (_, x) => renderCell(x, y))
