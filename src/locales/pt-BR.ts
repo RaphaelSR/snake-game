@@ -64,5 +64,10 @@ export const ptBR: Translations = {
     difficulty: "Dificuldade",
     theme: "Tema Visual",
     language: "Idioma"
+  },
+  footer: {
+    madeBy: "Feito por",
+    openSource: "Código aberto",
+    viewOnGitHub: "Ver no GitHub"
   }
 };

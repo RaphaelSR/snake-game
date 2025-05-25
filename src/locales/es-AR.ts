@@ -64,5 +64,10 @@ export const esAR: Translations = {
     difficulty: "Dificultad",
     theme: "Tema Visual",
     language: "Idioma"
+  },
+  footer: {
+    madeBy: "Hecho por",
+    openSource: "Código abierto",
+    viewOnGitHub: "Ver en GitHub"
   }
 };
