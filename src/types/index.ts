@@ -17,3 +17,4 @@ export interface GameState {
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
 export * from "./gameSettings";
+export * from "./i18n";

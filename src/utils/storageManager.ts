@@ -1,24 +1,22 @@
 import type { GameSettings } from "@/types";
-
-const HIGH_SCORE_KEY = "snake_high_score";
-const GAME_SETTINGS_KEY = "snake_settings";
+import { STORAGE_KEYS } from "@/constants";
 
 export function saveHighScore(score: number): void {
-  localStorage.setItem(HIGH_SCORE_KEY, score.toString());
+  localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, score.toString());
 }
 
 export function getHighScore(): number {
-  const score = localStorage.getItem(HIGH_SCORE_KEY);
+  const score = localStorage.getItem(STORAGE_KEYS.HIGH_SCORE);
   return score ? parseInt(score, 10) : 0;
 }
 
 export function saveGameSettings(settings: GameSettings): void {
-  localStorage.setItem(GAME_SETTINGS_KEY, JSON.stringify(settings));
+  localStorage.setItem(STORAGE_KEYS.GAME_SETTINGS, JSON.stringify(settings));
 }
 
 export function getGameSettings(): GameSettings | null {
   try {
-    const settings = localStorage.getItem(GAME_SETTINGS_KEY);
+    const settings = localStorage.getItem(STORAGE_KEYS.GAME_SETTINGS);
     return settings ? (JSON.parse(settings) as GameSettings) : null;
   } catch {
     return null;
@@ -26,6 +24,6 @@ export function getGameSettings(): GameSettings | null {
 }
 
 export function clearGameData(): void {
-  localStorage.removeItem(HIGH_SCORE_KEY);
-  localStorage.removeItem(GAME_SETTINGS_KEY);
+  localStorage.removeItem(STORAGE_KEYS.HIGH_SCORE);
+  localStorage.removeItem(STORAGE_KEYS.GAME_SETTINGS);
 }

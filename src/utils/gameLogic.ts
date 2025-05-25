@@ -1,19 +1,19 @@
 import type { Position, Direction, GameMode } from "@/types";
+import { GAME_CONSTANTS, DIRECTION_VECTORS } from "@/constants";
 
 export const INITIAL_SNAKE: Position[] = [
-  { x: 10, y: 10 },
-  { x: 9, y: 10 },
-  { x: 8, y: 10 }
+  GAME_CONSTANTS.INITIAL_SNAKE_POSITION,
+  {
+    x: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.x - 1,
+    y: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.y
+  },
+  {
+    x: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.x - 2,
+    y: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.y
+  }
 ];
 
-export const GRID_SIZE = 20;
-
-const DIRECTION_VECTORS: Record<Direction, Position> = {
-  UP: { x: 0, y: -1 },
-  DOWN: { x: 0, y: 1 },
-  LEFT: { x: -1, y: 0 },
-  RIGHT: { x: 1, y: 0 }
-};
+export const GRID_SIZE = GAME_CONSTANTS.GRID_SIZE;
 
 export function generateFood(snake: Position[]): Position {
   let food: Position;

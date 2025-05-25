@@ -1,10 +1,10 @@
+import { GAME_CONSTANTS } from "@/constants";
+
 export type GameMode = "classic" | "infinite" | "moving_food" | "time_attack";
 export type Difficulty = "easy" | "regular" | "hard";
 
 export interface GameModeConfig {
   id: GameMode;
-  name: string;
-  description: string;
   features: {
     infiniteBorders?: boolean;
     movingFood?: boolean;
@@ -15,10 +15,8 @@ export interface GameModeConfig {
 
 export interface DifficultyConfig {
   id: Difficulty;
-  name: string;
   speed: number;
   scoreMultiplier: number;
-  description: string;
   foodSpeedMultiplier: number;
 }
 
@@ -30,35 +28,27 @@ export interface GameSettings {
 export const GAME_MODES: Record<GameMode, GameModeConfig> = {
   classic: {
     id: "classic",
-    name: "Clássico",
-    description: "O jogo tradicional da cobrinha",
     features: {}
   },
   infinite: {
     id: "infinite",
-    name: "Bordas Infinitas",
-    description: "A cobra atravessa as bordas e aparece do outro lado",
     features: {
       infiniteBorders: true
     }
   },
   moving_food: {
     id: "moving_food",
-    name: "Comida Móvel",
-    description: "A comida muda de posição periodicamente",
     features: {
       movingFood: true,
-      foodMoveInterval: 8000
+      foodMoveInterval: GAME_CONSTANTS.FOOD_MOVE_INTERVALS.MOVING_FOOD
     }
   },
   time_attack: {
     id: "time_attack",
-    name: "Contra o Tempo",
-    description: "Faça o máximo de pontos em 2 minutos",
     features: {
-      timeLimit: 120000,
+      timeLimit: GAME_CONSTANTS.TIME_LIMITS.TIME_ATTACK,
       movingFood: true,
-      foodMoveInterval: 6000
+      foodMoveInterval: GAME_CONSTANTS.FOOD_MOVE_INTERVALS.TIME_ATTACK
     }
   }
 } as const;
@@ -66,26 +56,20 @@ export const GAME_MODES: Record<GameMode, GameModeConfig> = {
 export const DIFFICULTY_LEVELS: Record<Difficulty, DifficultyConfig> = {
   easy: {
     id: "easy",
-    name: "Fácil",
-    speed: 200,
-    scoreMultiplier: 1,
-    description: "Velocidade reduzida para iniciantes",
-    foodSpeedMultiplier: 2.5
+    speed: GAME_CONSTANTS.SPEEDS.EASY,
+    scoreMultiplier: GAME_CONSTANTS.SCORE_MULTIPLIERS.EASY,
+    foodSpeedMultiplier: GAME_CONSTANTS.FOOD_SPEED_MULTIPLIERS.EASY
   },
   regular: {
     id: "regular",
-    name: "Normal",
-    speed: 150,
-    scoreMultiplier: 1.5,
-    description: "Velocidade padrão do jogo",
-    foodSpeedMultiplier: 1.5
+    speed: GAME_CONSTANTS.SPEEDS.REGULAR,
+    scoreMultiplier: GAME_CONSTANTS.SCORE_MULTIPLIERS.REGULAR,
+    foodSpeedMultiplier: GAME_CONSTANTS.FOOD_SPEED_MULTIPLIERS.REGULAR
   },
   hard: {
     id: "hard",
-    name: "Difícil",
-    speed: 100,
-    scoreMultiplier: 2,
-    description: "Velocidade alta para experts",
-    foodSpeedMultiplier: 1
+    speed: GAME_CONSTANTS.SPEEDS.HARD,
+    scoreMultiplier: GAME_CONSTANTS.SCORE_MULTIPLIERS.HARD,
+    foodSpeedMultiplier: GAME_CONSTANTS.FOOD_SPEED_MULTIPLIERS.HARD
   }
 } as const;

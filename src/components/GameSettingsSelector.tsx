@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Settings } from "lucide-react";
 import { useGameSettings } from "@/context/GameSettingsContext";
 import { useTheme } from "@/hooks/useTheme";
-import {
-  GAME_MODES,
-  DIFFICULTY_LEVELS,
-  type Difficulty
-} from "@/types/gameSettings";
+import { useI18n } from "@/context/I18nContext";
+import { LANGUAGE_FLAGS, LANGUAGE_NAMES } from "@/constants";
+import { GAME_MODES, type Difficulty } from "@/types/gameSettings";
 import { Modal } from "@/components/ui";
 import "./GameSettingsSelector.css";
 
@@ -14,6 +12,7 @@ export const GameSettingsSelector: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { settings, updateMode, updateDifficulty } = useGameSettings();
   const { currentTheme, changeTheme, availableThemes, themes } = useTheme();
+  const { language, changeLanguage, t, availableLanguages } = useI18n();
 
   const difficultyOptions: Difficulty[] = ["easy", "regular", "hard"];
   const currentDifficultyIndex = difficultyOptions.indexOf(settings.difficulty);
@@ -23,37 +22,33 @@ export const GameSettingsSelector: React.FC = () => {
   };
 
   const getDifficultyDescription = (difficulty: Difficulty) => {
-    const base = DIFFICULTY_LEVELS[difficulty].description;
+    const base = t(`difficulty.${difficulty}.description`);
     const mode = GAME_MODES[settings.mode];
 
     if (mode.features.movingFood) {
       const foodSpeed =
         difficulty === "easy"
-          ? "lenta"
+          ? t("difficulty.foodSpeed.slow")
           : difficulty === "regular"
-          ? "moderada"
-          : "rápida";
-      return `${base} • Comida móvel ${foodSpeed}`;
+          ? t("difficulty.foodSpeed.moderate")
+          : t("difficulty.foodSpeed.fast");
+      return `${base} • ${t("difficulty.movingFoodLabel")} ${foodSpeed}`;
     }
 
     return base;
   };
 
-  // Apply theme changes immediately when theme changes
   useEffect(() => {
     const theme = themes[currentTheme];
     const root = document.documentElement;
     const body = document.body;
 
-    // Apply CSS variables
     Object.entries(theme.colors).forEach(([key, value]) => {
       root.style.setProperty(`--color-${key}`, value);
     });
 
-    // Clear all theme classes first
     body.className = body.className.replace(/theme-\w+/g, "").trim();
 
-    // Apply new theme classes
     const themeClasses = [`theme-${currentTheme}`];
 
     if (theme.effects.glow) {
@@ -63,10 +58,8 @@ export const GameSettingsSelector: React.FC = () => {
       themeClasses.push("theme-pixelated");
     }
 
-    // Add classes to body
     body.classList.add(...themeClasses);
 
-    // Force rerender
     body.classList.add("theme-transition");
     requestAnimationFrame(() => {
       body.classList.remove("theme-transition");
@@ -114,13 +107,52 @@ export const GameSettingsSelector: React.FC = () => {
       <Modal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="Configurações do Jogo"
+        title={t("settings.title")}
       >
         <div className="settings-content">
-          {/* Modo de Jogo */}
           <div className="settings-section">
             <h3 style={{ color: "var(--color-text)", marginBottom: "12px" }}>
-              Modo de Jogo
+              {t("settings.language")}
+            </h3>
+            <div className="language-grid">
+              {availableLanguages.map((lang) => (
+                <button
+                  key={lang}
+                  className={`language-option ${
+                    language === lang ? "active" : ""
+                  }`}
+                  onClick={() => changeLanguage(lang)}
+                  style={{
+                    backgroundColor:
+                      language === lang
+                        ? "var(--color-accent)"
+                        : "var(--color-background)",
+                    color:
+                      language === lang
+                        ? "var(--color-background)"
+                        : "var(--color-text)",
+                    border: `2px solid var(--color-accent)`,
+                    padding: "12px",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease"
+                  }}
+                >
+                  <span style={{ fontSize: "20px" }}>
+                    {LANGUAGE_FLAGS[lang]}
+                  </span>
+                  <span>{LANGUAGE_NAMES[lang]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="settings-section">
+            <h3 style={{ color: "var(--color-text)", marginBottom: "12px" }}>
+              {t("settings.gameMode")}
             </h3>
             <div className="settings-grid">
               {Object.values(GAME_MODES).map((mode) => (
@@ -142,17 +174,20 @@ export const GameSettingsSelector: React.FC = () => {
                     border: `2px solid var(--color-accent)`
                   }}
                 >
-                  <div className="setting-name">{mode.name}</div>
-                  <div className="setting-description">{mode.description}</div>
+                  <div className="setting-name">
+                    {t(`modes.${mode.id}.name`)}
+                  </div>
+                  <div className="setting-description">
+                    {t(`modes.${mode.id}.description`)}
+                  </div>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Dificuldade - Slider */}
           <div className="settings-section">
             <h3 style={{ color: "var(--color-text)", marginBottom: "12px" }}>
-              Dificuldade
+              {t("settings.difficulty")}
             </h3>
             <div className="difficulty-slider-container">
               <div className="difficulty-labels">
@@ -169,7 +204,7 @@ export const GameSettingsSelector: React.FC = () => {
                           : "var(--color-text)"
                     }}
                   >
-                    {DIFFICULTY_LEVELS[difficulty].name}
+                    {t(`difficulty.${difficulty}.name`)}
                   </span>
                 ))}
               </div>
@@ -227,7 +262,7 @@ export const GameSettingsSelector: React.FC = () => {
           {/* Temas */}
           <div className="settings-section">
             <h3 style={{ color: "var(--color-text)", marginBottom: "12px" }}>
-              Tema Visual
+              {t("settings.theme")}
             </h3>
             <div className="theme-grid">
               {availableThemes.map((themeName) => (
@@ -261,7 +296,7 @@ export const GameSettingsSelector: React.FC = () => {
                       style={{ backgroundColor: themes[themeName].colors.food }}
                     />
                   </div>
-                  <span className="theme-name">{themes[themeName].name}</span>
+                  <span className="theme-name">{t(`themes.${themeName}`)}</span>
                 </button>
               ))}
             </div>

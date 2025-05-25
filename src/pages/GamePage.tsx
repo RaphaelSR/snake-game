@@ -1,4 +1,5 @@
 import { useGame } from "@/context/GameContext";
+import { useI18n } from "@/context/I18nContext";
 import { useKeyboard } from "@/hooks/useKeyboard";
 import {
   GameBoard,
@@ -10,6 +11,7 @@ import {
 
 export function GamePage(): JSX.Element {
   const { changeDirection, pauseGame, restartGame, isPlaying } = useGame();
+  const { t } = useI18n();
 
   useKeyboard({
     onDirectionChange: changeDirection,
@@ -29,10 +31,10 @@ export function GamePage(): JSX.Element {
             className="text-4xl font-bold mb-2"
             style={{ color: "var(--color-text)" }}
           >
-            Snake Game
+            {t("game.title")}
           </h1>
           <p className="hidden sm:block" style={{ color: "var(--color-text)" }}>
-            Use arrow keys or WASD to move • Space to pause • R to restart
+            {t("game.instructions")}
           </p>
         </header>
 
