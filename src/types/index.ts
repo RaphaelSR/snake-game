@@ -11,11 +11,9 @@ export interface GameState {
   isGameOver: boolean;
   isPlaying: boolean;
   highScore: number;
+  timeLeft?: number;
 }
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
-export interface GameSettings {
-  gridSize: number;
-  gameSpeed: number;
-}
+export * from "./gameSettings";

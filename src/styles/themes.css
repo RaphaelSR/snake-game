@@ -17,6 +17,10 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.theme-transition {
+  transition: all 0.1s ease !important;
+}
+
 .min-h-screen {
   background: var(--color-background) !important;
 }
@@ -189,30 +193,115 @@ button:hover {
   stroke: var(--color-grid) !important;
 }
 
-.theme-retro,
-.theme-glow {
-  background-color: var(--color-background);
+.theme-retro {
+  background-color: var(--color-background) !important;
+  font-family: 'Courier New', monospace !important;
+}
+
+.theme-retro * {
+  font-family: 'Courier New', monospace !important;
 }
 
 .theme-retro .game-board,
 .theme-retro canvas,
-.theme-glow .game-board,
-.theme-glow canvas {
-  box-shadow: 0 0 20px var(--color-accent);
-  border: 2px solid var(--color-accent);
+.theme-retro .aspect-square {
+  box-shadow: 0 0 20px var(--color-accent) !important;
+  border: 2px solid var(--color-accent) !important;
+  background-color: var(--color-background) !important;
 }
 
 .theme-retro .score,
-.theme-retro h1, .theme-retro h2, .theme-retro h3,
-.theme-glow .score,
-.theme-glow h1, .theme-glow h2, .theme-glow h3 {
-  text-shadow: 0 0 10px var(--color-accent);
-  color: var(--color-text);
+.theme-retro h1, 
+.theme-retro h2, 
+.theme-retro h3,
+.theme-retro .text-4xl,
+.theme-retro .text-2xl {
+  text-shadow: 0 0 10px var(--color-accent) !important;
+  color: var(--color-text) !important;
+  font-family: 'Courier New', monospace !important;
 }
 
-.theme-retro button:hover,
-.theme-glow button:hover {
-  box-shadow: 0 0 15px var(--color-accent);
+.theme-retro button {
+  font-family: 'Courier New', monospace !important;
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro button:hover {
+  box-shadow: 0 0 15px var(--color-accent) !important;
+}
+
+.theme-retro .setting-option {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .setting-option .setting-name,
+.theme-retro .setting-option .setting-description {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .setting-option.active {
+  background-color: var(--color-accent) !important;
+  color: var(--color-background) !important;
+  text-shadow: none !important;
+  box-shadow: 0 0 15px var(--color-accent) !important;
+}
+
+.theme-retro .setting-option.active .setting-name,
+.theme-retro .setting-option.active .setting-description {
+  color: var(--color-background) !important;
+  text-shadow: none !important;
+}
+
+.theme-retro .setting-option:not(.active) {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .setting-option:not(.active) .setting-name,
+.theme-retro .setting-option:not(.active) .setting-description {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .theme-option {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .theme-option .theme-name {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .theme-option.active {
+  background-color: var(--color-accent) !important;
+  color: var(--color-background) !important;
+  text-shadow: none !important;
+  box-shadow: 0 0 15px var(--color-accent) !important;
+}
+
+.theme-retro .theme-option.active .theme-name {
+  color: var(--color-background) !important;
+  text-shadow: none !important;
+}
+
+.theme-retro .theme-option:not(.active) {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .theme-option:not(.active) .theme-name {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .difficulty-label {
+  text-shadow: 0 0 5px currentColor !important;
+}
+
+.theme-retro .difficulty-label.active {
+  color: var(--color-accent) !important;
+  text-shadow: 0 0 8px var(--color-accent) !important;
+}
+
+.theme-retro .fixed .relative {
+  background-color: var(--color-background) !important;
+  border: 2px solid var(--color-accent) !important;
+  box-shadow: 0 0 30px var(--color-accent) !important;
 }
 
 .theme-glow {
@@ -222,7 +311,7 @@ button:hover {
 .theme-glow .game-board,
 .theme-glow canvas,
 .theme-glow .aspect-square {
-  box-shadow: 0 0 20px var(--color-accent);
+  box-shadow: 0 0 20px var(--color-accent) !important;
 }
 
 .theme-glow .score,
@@ -230,37 +319,23 @@ button:hover {
 .theme-glow h1,
 .theme-glow h2,
 .theme-glow h3 {
-  text-shadow: 0 0 10px var(--color-accent);
+  text-shadow: 0 0 10px var(--color-accent) !important;
 }
 
 .theme-glow button:hover {
-  box-shadow: 0 0 15px var(--color-accent);
+  box-shadow: 0 0 15px var(--color-accent) !important;
 }
 
 .theme-pixelated,
 .theme-pixelated * {
   font-family: 'Courier New', monospace !important;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: crisp-edges !important;
 }
 
 .theme-pixelated canvas {
   image-rendering: pixelated !important;
-}
-
-.theme-pixelated {
-  font-family: 'Courier New', monospace;
-}
-
-.theme-pixelated canvas {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-}
-
-.theme-pixelated * {
-  font-family: 'Courier New', monospace !important;
 }
 
 .theme-neon {

@@ -1,3 +1,5 @@
+import type { GameSettings } from "@/types";
+
 const HIGH_SCORE_KEY = "snake_high_score";
 const GAME_SETTINGS_KEY = "snake_settings";
 
@@ -10,13 +12,17 @@ export function getHighScore(): number {
   return score ? parseInt(score, 10) : 0;
 }
 
-export function saveGameSettings(settings: Record<string, unknown>): void {
+export function saveGameSettings(settings: GameSettings): void {
   localStorage.setItem(GAME_SETTINGS_KEY, JSON.stringify(settings));
 }
 
-export function getGameSettings(): Record<string, unknown> | null {
-  const settings = localStorage.getItem(GAME_SETTINGS_KEY);
-  return settings ? JSON.parse(settings) : null;
+export function getGameSettings(): GameSettings | null {
+  try {
+    const settings = localStorage.getItem(GAME_SETTINGS_KEY);
+    return settings ? (JSON.parse(settings) as GameSettings) : null;
+  } catch {
+    return null;
+  }
 }
 
 export function clearGameData(): void {

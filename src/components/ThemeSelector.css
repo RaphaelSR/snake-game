@@ -50,7 +50,6 @@
   border-radius: 2px;
 }
 
-/* Efeitos de tema */
 .theme-glow .theme-option.active {
   box-shadow: 0 0 20px var(--color-accent);
 }

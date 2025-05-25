@@ -8,21 +8,29 @@ export const ThemeSelector: React.FC = () => {
   useEffect(() => {
     const theme = themes[currentTheme];
     const root = document.documentElement;
+    const body = document.body;
 
     Object.entries(theme.colors).forEach(([key, value]) => {
       root.style.setProperty(`--color-${key}`, value);
     });
 
-    const bodyClasses = [`theme-${currentTheme}`];
+    body.className = body.className.replace(/theme-\w+/g, "").trim();
+
+    const themeClasses = [`theme-${currentTheme}`];
 
     if (theme.effects.glow) {
-      bodyClasses.push("theme-glow");
+      themeClasses.push("theme-glow");
     }
     if (theme.effects.pixelated) {
-      bodyClasses.push("theme-pixelated");
+      themeClasses.push("theme-pixelated");
     }
 
-    document.body.className = bodyClasses.join(" ");
+    body.classList.add(...themeClasses);
+
+    body.classList.add("theme-transition");
+    requestAnimationFrame(() => {
+      body.classList.remove("theme-transition");
+    });
   }, [currentTheme, themes]);
 
   return (

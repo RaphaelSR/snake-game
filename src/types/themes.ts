@@ -44,5 +44,20 @@ export const themes: { [key: string]: Theme } = {
       glow: true,
       pixelated: true
     }
+  },
+  neon: {
+    name: "Neon",
+    colors: {
+      background: "#0a0a0a",
+      snake: "#ff00ff",
+      food: "#00ffff",
+      grid: "#330033",
+      text: "#ffffff",
+      accent: "#ff00ff"
+    },
+    effects: {
+      glow: true,
+      pixelated: false
+    }
   }
 };
