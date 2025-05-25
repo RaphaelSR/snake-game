@@ -7,11 +7,7 @@ import React, {
 } from "react";
 import type { Language } from "@/constants";
 import type { I18nContextType } from "@/types/i18n";
-import {
-  SUPPORTED_LANGUAGES,
-  DEFAULT_LANGUAGE,
-  STORAGE_KEYS
-} from "@/constants";
+import { SUPPORTED_LANGUAGES, STORAGE_KEYS } from "@/constants";
 import { translations } from "@/locales";
 import { detectUserLanguage, getNestedValue } from "@/utils/i18n";
 
@@ -21,7 +17,6 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {
   const [language, setLanguage] = useState<Language>(() => {
-    // Try to load from localStorage first
     const savedLanguage = localStorage.getItem(
       STORAGE_KEYS.LANGUAGE
     ) as Language;
@@ -29,7 +24,6 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
       return savedLanguage;
     }
 
-    // Fallback to browser detection
     return detectUserLanguage();
   });
 
@@ -49,7 +43,6 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    // Save language on change
     localStorage.setItem(STORAGE_KEYS.LANGUAGE, language);
   }, [language]);
 
