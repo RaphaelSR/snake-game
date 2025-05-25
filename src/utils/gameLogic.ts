@@ -79,9 +79,7 @@ export function checkCollision(head: Position, snake: Position[]): boolean {
     return true;
   }
 
-  return snake
-    .slice(1)
-    .some((segment) => segment.x === head.x && segment.y === head.y);
+  return snake.some((segment) => segment.x === head.x && segment.y === head.y);
 }
 
 export function checkCollisionWithMode(
@@ -89,20 +87,13 @@ export function checkCollisionWithMode(
   snake: Position[],
   mode: GameMode
 ): boolean {
-  if (mode !== "infinite") {
-    if (
-      head.x < 0 ||
-      head.x >= GRID_SIZE ||
-      head.y < 0 ||
-      head.y >= GRID_SIZE
-    ) {
-      return true;
-    }
+  if (mode === "infinite") {
+    return snake.some(
+      (segment) => segment.x === head.x && segment.y === head.y
+    );
   }
 
-  return snake
-    .slice(1)
-    .some((segment) => segment.x === head.x && segment.y === head.y);
+  return checkCollision(head, snake);
 }
 
 export function checkFoodCollision(head: Position, food: Position): boolean {

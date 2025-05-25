@@ -4,9 +4,11 @@ import React, {
   useReducer,
   useEffect,
   useCallback,
-  useRef
+  useRef,
+  useState
 } from "react";
 import type { GameState, Direction, GameSettings } from "@/types";
+import type { PlayerRankingResult } from "@/types/rankings";
 import {
   INITIAL_SNAKE,
   generateFood,
@@ -19,12 +21,20 @@ import { saveHighScore, getHighScore } from "@/utils/storageManager";
 import { useGameSettings } from "./GameSettingsContext";
 import { useAnalyticsContext } from "./AnalyticsContext";
 import { GAME_MODES, DIFFICULTY_LEVELS } from "@/types/gameSettings";
+import { rankingService } from "@/services/rankingService";
+import { RANKING_CONSTANTS } from "@/constants/rankings";
 
 interface GameContextValue extends GameState {
   startGame: () => void;
   pauseGame: () => void;
   restartGame: () => void;
   changeDirection: (direction: Direction) => void;
+  pendingRankingResult: PlayerRankingResult | null;
+  showPlayerNameModal: boolean;
+  showRankingSuccessModal: boolean;
+  submitPlayerScore: (playerName: string) => void;
+  skipRanking: () => void;
+  closeRankingSuccess: () => void;
 }
 
 const GameContext = createContext<GameContextValue | undefined>(undefined);
@@ -153,6 +163,11 @@ export function GameProvider({
   const lastPauseTime = useRef<number>(0);
   const totalPausedTime = useRef<number>(0);
 
+  const [pendingRankingResult, setPendingRankingResult] =
+    useState<PlayerRankingResult | null>(null);
+  const [showPlayerNameModal, setShowPlayerNameModal] = useState(false);
+  const [showRankingSuccessModal, setShowRankingSuccessModal] = useState(false);
+
   useEffect(() => {
     const savedHighScore = getHighScore();
     dispatch({ type: "SET_HIGH_SCORE", payload: savedHighScore });
@@ -169,7 +184,6 @@ export function GameProvider({
     return () => clearInterval(gameLoop);
   }, [state.isPlaying, settings]);
 
-  // Food movement for moving food modes
   useEffect(() => {
     if (!state.isPlaying) return;
 
@@ -188,7 +202,6 @@ export function GameProvider({
     return () => clearInterval(foodMoveInterval);
   }, [state.isPlaying, settings.mode, settings.difficulty]);
 
-  // Timer for time attack mode
   useEffect(() => {
     if (!state.isPlaying) return;
 
@@ -212,6 +225,10 @@ export function GameProvider({
 
       if (isNewHighScore) {
         analytics.trackHighScore(state.score);
+      }
+
+      if (state.score >= RANKING_CONSTANTS.MIN_SCORE_FOR_RANKING) {
+        setShowPlayerNameModal(true);
       }
     }
   }, [state.isGameOver, state.score, state.highScore, analytics]);
@@ -269,12 +286,48 @@ export function GameProvider({
     dispatch({ type: "CHANGE_DIRECTION", payload: direction });
   }, []);
 
+  const submitPlayerScore = useCallback(
+    async (playerName: string) => {
+      setShowPlayerNameModal(false);
+
+      try {
+        const result = await rankingService.submitScore(
+          playerName,
+          state.score,
+          settings.mode,
+          settings.difficulty
+        );
+
+        if (result.isNewRanking) {
+          setPendingRankingResult(result);
+          setShowRankingSuccessModal(true);
+        }
+      } catch (error) {}
+    },
+    [state.score, settings.mode, settings.difficulty]
+  );
+
+  const skipRanking = useCallback(() => {
+    setShowPlayerNameModal(false);
+  }, []);
+
+  const closeRankingSuccess = useCallback(() => {
+    setShowRankingSuccessModal(false);
+    setPendingRankingResult(null);
+  }, []);
+
   const value: GameContextValue = {
     ...state,
     startGame,
     pauseGame,
     restartGame,
-    changeDirection
+    changeDirection,
+    pendingRankingResult,
+    showPlayerNameModal,
+    showRankingSuccessModal,
+    submitPlayerScore,
+    skipRanking,
+    closeRankingSuccess
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

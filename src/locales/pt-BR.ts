@@ -4,7 +4,7 @@ export const ptBR: Translations = {
   game: {
     title: "Snake Game",
     instructions:
-      "Use as setas ou WASD para mover • Espaço para pausar • R para reiniciar",
+      "Use as setas ou WASD para mover • Espaço para pausar/iniciar • R para reiniciar",
     score: "Pontuação",
     highScore: "Recorde",
     time: "Tempo",
@@ -69,5 +69,31 @@ export const ptBR: Translations = {
     madeBy: "Feito por",
     openSource: "Código aberto",
     viewOnGitHub: "Ver no GitHub"
+  },
+  rankings: {
+    title: "Rankings",
+    enterName: "Digite seu nome",
+    playerName: "Nome do jogador",
+    namePlaceholder: "Digite seu nome",
+    defaultPlayerName: "Anônimo",
+    characters: "caracteres",
+    invalidName: "Nome deve ter entre 2 e 20 caracteres",
+    qualifiedForRanking: "Você se qualificou para o ranking!",
+    submit: "Enviar",
+    skip: "Pular",
+    empty: "Nenhum ranking encontrado",
+    loadAll: "Carregar todos os rankings",
+    success: {
+      title: "🎉 Parabéns!",
+      general: "Você entrou no ranking!",
+      firstPlace: "🥇 Você conquistou o 1º lugar!",
+      topThree: "🏆 Você ficou em {rank}º lugar!",
+      topTen: "⭐ Você ficou em {rank}º lugar!",
+      improved: "Subiu do {oldRank}º para o {newRank}º lugar!"
+    }
+  },
+  common: {
+    loading: "Carregando...",
+    continue: "Continuar"
   }
 };
