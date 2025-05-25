@@ -1,0 +1,61 @@
+.theme-selector {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.theme-selector h3 {
+  color: var(--color-text);
+  margin-bottom: 15px;
+  font-family: inherit;
+}
+
+.theme-options {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.theme-option {
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  font-family: inherit;
+  font-weight: bold;
+}
+
+.theme-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-option.active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theme-preview {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.preview-snake,
+.preview-food {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.theme-glow .theme-option.active {
+  box-shadow: 0 0 20px var(--color-accent);
+}
+
+.theme-pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}

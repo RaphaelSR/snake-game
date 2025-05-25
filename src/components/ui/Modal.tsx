@@ -21,12 +21,29 @@ export function Modal({
         className="absolute inset-0 bg-black bg-opacity-50"
         onClick={onClose}
       />
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+      <div
+        className="relative rounded-lg shadow-xl max-w-md w-full mx-4 p-6"
+        style={{
+          backgroundColor: "var(--color-background)",
+          border: `2px solid var(--color-accent)`
+        }}
+      >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <h2
+            className="text-xl font-semibold"
+            style={{ color: "var(--color-text)" }}
+          >
+            {title}
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl"
+            className="text-2xl"
+            style={{
+              color: "var(--color-text)",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer"
+            }}
           >
             ×
           </button>

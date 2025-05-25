@@ -5,16 +5,18 @@ import React, {
   useEffect,
   useCallback
 } from "react";
-import type { GameState, Direction } from "@/types";
+import type { GameState, Direction, GameSettings } from "@/types";
 import {
   INITIAL_SNAKE,
   generateFood,
-  moveSnake,
-  checkCollision,
+  moveSnakeWithMode,
+  checkCollisionWithMode,
   checkFoodCollision,
   getOppositeDirection
 } from "@/utils/gameLogic";
 import { saveHighScore, getHighScore } from "@/utils/storageManager";
+import { useGameSettings } from "./GameSettingsContext";
+import { GAME_MODES, DIFFICULTY_LEVELS } from "@/types/gameSettings";
 
 interface GameContextValue extends GameState {
   startGame: () => void;
@@ -28,12 +30,14 @@ const GameContext = createContext<GameContextValue | undefined>(undefined);
 type GameAction =
   | { type: "START_GAME" }
   | { type: "PAUSE_GAME" }
-  | { type: "RESTART_GAME" }
+  | { type: "RESTART_GAME"; payload: GameSettings }
   | { type: "CHANGE_DIRECTION"; payload: Direction }
-  | { type: "MOVE_SNAKE" }
+  | { type: "MOVE_SNAKE"; payload: GameSettings }
   | { type: "GAME_OVER" }
   | { type: "EAT_FOOD" }
-  | { type: "SET_HIGH_SCORE"; payload: number };
+  | { type: "SET_HIGH_SCORE"; payload: number }
+  | { type: "MOVE_FOOD" }
+  | { type: "TICK_TIMER" };
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -43,7 +47,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case "PAUSE_GAME":
       return { ...state, isPlaying: false };
 
-    case "RESTART_GAME":
+    case "RESTART_GAME": {
+      const mode = GAME_MODES[action.payload.mode];
       return {
         ...state,
         snake: INITIAL_SNAKE,
@@ -51,8 +56,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         direction: "RIGHT",
         score: 0,
         isGameOver: false,
-        isPlaying: false
+        isPlaying: false,
+        timeLeft: mode.features.timeLimit
+          ? mode.features.timeLimit / 1000
+          : undefined
       };
+    }
 
     case "CHANGE_DIRECTION":
       if (getOppositeDirection(action.payload) === state.direction) {
@@ -60,17 +69,24 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       }
       return { ...state, direction: action.payload };
 
-    case "MOVE_SNAKE":
-      const newSnake = moveSnake(state.snake, state.direction);
+    case "MOVE_SNAKE": {
+      const settings = action.payload;
+      const newSnake = moveSnakeWithMode(
+        state.snake,
+        state.direction,
+        settings.mode
+      );
       const head = newSnake[0];
 
-      if (checkCollision(head, state.snake)) {
+      if (checkCollisionWithMode(head, state.snake, settings.mode)) {
         return { ...state, isGameOver: true, isPlaying: false };
       }
 
       if (checkFoodCollision(head, state.food)) {
         const grownSnake = [...newSnake, state.snake[state.snake.length - 1]];
-        const newScore = state.score + 10;
+        const difficulty = DIFFICULTY_LEVELS[settings.difficulty];
+        const newScore =
+          state.score + Math.round(10 * difficulty.scoreMultiplier);
         const newHighScore = Math.max(newScore, state.highScore);
 
         if (newHighScore > state.highScore) {
@@ -87,6 +103,21 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       }
 
       return { ...state, snake: newSnake };
+    }
+
+    case "MOVE_FOOD":
+      return {
+        ...state,
+        food: generateFood(state.snake)
+      };
+
+    case "TICK_TIMER": {
+      const timeLeft = (state.timeLeft || 0) - 1;
+      if (timeLeft <= 0) {
+        return { ...state, isGameOver: true, isPlaying: false, timeLeft: 0 };
+      }
+      return { ...state, timeLeft };
+    }
 
     case "SET_HIGH_SCORE":
       return { ...state, highScore: action.payload };
@@ -112,6 +143,7 @@ export function GameProvider({
   children: React.ReactNode;
 }): JSX.Element {
   const [state, dispatch] = useReducer(gameReducer, initialState);
+  const { settings } = useGameSettings();
 
   useEffect(() => {
     const savedHighScore = getHighScore();
@@ -121,12 +153,46 @@ export function GameProvider({
   useEffect(() => {
     if (!state.isPlaying) return;
 
+    const difficulty = DIFFICULTY_LEVELS[settings.difficulty];
     const gameLoop = setInterval(() => {
-      dispatch({ type: "MOVE_SNAKE" });
-    }, 150);
+      dispatch({ type: "MOVE_SNAKE", payload: settings });
+    }, difficulty.speed);
 
     return () => clearInterval(gameLoop);
-  }, [state.isPlaying]);
+  }, [state.isPlaying, settings]);
+
+  // Food movement for moving food modes
+  useEffect(() => {
+    if (!state.isPlaying) return;
+
+    const mode = GAME_MODES[settings.mode];
+    if (!mode.features.movingFood) return;
+
+    const difficulty = DIFFICULTY_LEVELS[settings.difficulty];
+    const baseFoodInterval = mode.features.foodMoveInterval || 5000;
+    const adjustedFoodInterval =
+      baseFoodInterval * difficulty.foodSpeedMultiplier;
+
+    const foodMoveInterval = setInterval(() => {
+      dispatch({ type: "MOVE_FOOD" });
+    }, adjustedFoodInterval);
+
+    return () => clearInterval(foodMoveInterval);
+  }, [state.isPlaying, settings.mode, settings.difficulty]);
+
+  // Timer for time attack mode
+  useEffect(() => {
+    if (!state.isPlaying) return;
+
+    const mode = GAME_MODES[settings.mode];
+    if (!mode.features.timeLimit) return;
+
+    const timer = setInterval(() => {
+      dispatch({ type: "TICK_TIMER" });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [state.isPlaying, settings.mode]);
 
   const startGame = useCallback(() => {
     dispatch({ type: "START_GAME" });
@@ -137,8 +203,8 @@ export function GameProvider({
   }, []);
 
   const restartGame = useCallback(() => {
-    dispatch({ type: "RESTART_GAME" });
-  }, []);
+    dispatch({ type: "RESTART_GAME", payload: settings });
+  }, [settings]);
 
   const changeDirection = useCallback((direction: Direction) => {
     dispatch({ type: "CHANGE_DIRECTION", payload: direction });

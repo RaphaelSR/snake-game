@@ -1,21 +1,20 @@
-import type { Position, Direction } from "@/types";
+import type { Position, Direction, GameMode } from "@/types";
+import { GAME_CONSTANTS, DIRECTION_VECTORS } from "@/constants";
 
 export const INITIAL_SNAKE: Position[] = [
-  { x: 10, y: 10 },
-  { x: 9, y: 10 },
-  { x: 8, y: 10 }
+  GAME_CONSTANTS.INITIAL_SNAKE_POSITION,
+  {
+    x: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.x - 1,
+    y: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.y
+  },
+  {
+    x: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.x - 2,
+    y: GAME_CONSTANTS.INITIAL_SNAKE_POSITION.y
+  }
 ];
 
-export const GRID_SIZE = 20;
+export const GRID_SIZE = GAME_CONSTANTS.GRID_SIZE;
 
-const DIRECTION_VECTORS: Record<Direction, Position> = {
-  UP: { x: 0, y: -1 },
-  DOWN: { x: 0, y: 1 },
-  LEFT: { x: -1, y: 0 },
-  RIGHT: { x: 1, y: 0 }
-};
-
-// Generate food position avoiding snake collision
 export function generateFood(snake: Position[]): Position {
   let food: Position;
   do {
@@ -37,6 +36,17 @@ export function moveSnake(snake: Position[], direction: Direction): Position[] {
   return [newHead, ...snake.slice(0, -1)];
 }
 
+export function moveSnakeWithMode(
+  snake: Position[],
+  direction: Direction,
+  mode: GameMode
+): Position[] {
+  const head = snake[0];
+  const newHead = getNewHeadWithMode(head, direction, mode);
+
+  return [newHead, ...snake.slice(0, -1)];
+}
+
 export function getNewHead(head: Position, direction: Direction): Position {
   const vector = DIRECTION_VECTORS[direction];
   return {
@@ -45,10 +55,49 @@ export function getNewHead(head: Position, direction: Direction): Position {
   };
 }
 
-// Check collision with walls or self
+export function getNewHeadWithMode(
+  head: Position,
+  direction: Direction,
+  mode: GameMode
+): Position {
+  const vector = DIRECTION_VECTORS[direction];
+  let newX = head.x + vector.x;
+  let newY = head.y + vector.y;
+
+  if (mode === "infinite") {
+    if (newX < 0) newX = GRID_SIZE - 1;
+    if (newX >= GRID_SIZE) newX = 0;
+    if (newY < 0) newY = GRID_SIZE - 1;
+    if (newY >= GRID_SIZE) newY = 0;
+  }
+
+  return { x: newX, y: newY };
+}
+
 export function checkCollision(head: Position, snake: Position[]): boolean {
   if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
     return true;
+  }
+
+  return snake
+    .slice(1)
+    .some((segment) => segment.x === head.x && segment.y === head.y);
+}
+
+export function checkCollisionWithMode(
+  head: Position,
+  snake: Position[],
+  mode: GameMode
+): boolean {
+  if (mode !== "infinite") {
+    if (
+      head.x < 0 ||
+      head.x >= GRID_SIZE ||
+      head.y < 0 ||
+      head.y >= GRID_SIZE
+    ) {
+      return true;
+    }
   }
 
   return snake
