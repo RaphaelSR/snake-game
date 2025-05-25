@@ -6,7 +6,8 @@ import { RANKING_CONSTANTS } from "@/constants/rankings";
 import {
   validatePlayerName,
   sanitizePlayerName,
-  getDefaultPlayerName
+  getDefaultPlayerName,
+  isValidPlayerName
 } from "@/utils/rankingUtils";
 
 interface PlayerNameModalProps {
@@ -51,6 +52,11 @@ export function PlayerNameModal({
   const handleSubmit = () => {
     const finalName = playerName.trim() || getDefaultPlayerName(language);
     const sanitizedName = sanitizePlayerName(finalName);
+
+    if (!isValidPlayerName(sanitizedName)) {
+      setError(t("rankings.invalidName"));
+      return;
+    }
 
     if (
       !validatePlayerName(

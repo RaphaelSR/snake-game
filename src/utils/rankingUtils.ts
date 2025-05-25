@@ -20,7 +20,20 @@ export function validatePlayerName(
 }
 
 export function sanitizePlayerName(name: string): string {
-  return name.trim().replace(/[<>]/g, "");
+  return name
+    .trim()
+    .replace(/[<>\"'&]/g, "")
+    .replace(/\s+/g, " ")
+    .substring(0, 20);
+}
+
+export function isValidPlayerName(name: string): boolean {
+  const sanitized = sanitizePlayerName(name);
+  return (
+    sanitized.length >= 2 &&
+    sanitized.length <= 20 &&
+    /^[a-zA-Z0-9\s\-_\.]+$/.test(sanitized)
+  );
 }
 
 export function isValidRankingEntry(entry: any): boolean {
@@ -32,6 +45,16 @@ export function isValidRankingEntry(entry: any): boolean {
     entry.playerName.trim().length > 0 &&
     typeof entry.mode === "string" &&
     typeof entry.difficulty === "string"
+  );
+}
+
+export function isValidScore(score: number): boolean {
+  return (
+    typeof score === "number" &&
+    !isNaN(score) &&
+    isFinite(score) &&
+    score >= 10 &&
+    score <= 100000
   );
 }
 

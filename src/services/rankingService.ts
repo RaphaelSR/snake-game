@@ -18,18 +18,33 @@ import type {
 } from "@/types/rankings";
 import type { GameMode, Difficulty } from "@/types";
 import { RANKING_CONSTANTS } from "@/constants/rankings";
-import { sanitizePlayerName } from "@/utils/rankingUtils";
+import { sanitizePlayerName, isValidPlayerName } from "@/utils/rankingUtils";
 
 class RankingService {
   private cache: Map<string, { data: RankingEntry[]; timestamp: number }> =
     new Map();
+  private lastSubmissionTime: number = 0;
+  private readonly RATE_LIMIT_MS = 30000; // 30 seconds
 
   private getCacheKey(mode: GameMode, difficulty: Difficulty): string {
     return `${mode}_${difficulty}`;
   }
 
   private isValidScore(score: number): boolean {
-    return score >= RANKING_CONSTANTS.MIN_SCORE_FOR_RANKING;
+    return (
+      score >= RANKING_CONSTANTS.MIN_SCORE_FOR_RANKING &&
+      score <= 100000 &&
+      Number.isInteger(score)
+    );
+  }
+
+  private checkRateLimit(): boolean {
+    const now = Date.now();
+    if (now - this.lastSubmissionTime < this.RATE_LIMIT_MS) {
+      return false;
+    }
+    this.lastSubmissionTime = now;
+    return true;
   }
 
   async getRankings(
@@ -204,21 +219,30 @@ class RankingService {
     difficulty: Difficulty
   ): Promise<PlayerRankingResult> {
     if (!this.isValidScore(score)) {
-      return {
-        isNewRanking: false,
-        mode,
-        difficulty,
-        score
-      };
+      throw new Error("Invalid score: must be between 10 and 100000");
+    }
+
+    if (!this.checkRateLimit()) {
+      throw new Error(
+        "Rate limit exceeded: please wait 30 seconds between submissions"
+      );
     }
 
     try {
       const sanitizedName = sanitizePlayerName(playerName);
 
-      const docId = `${mode}_${difficulty}_${sanitizedName}_${Date.now()}`;
+      if (!isValidPlayerName(sanitizedName)) {
+        throw new Error(
+          "Invalid player name: only letters, numbers, spaces, hyphens, underscores and dots allowed"
+        );
+      }
+
+      const docId = `${mode}_${difficulty}_${sanitizedName}_${Date.now()}_${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
       const newEntry = {
         playerName: sanitizedName,
-        score,
+        score: Math.floor(score),
         mode,
         difficulty,
         timestamp: serverTimestamp()
@@ -248,12 +272,8 @@ class RankingService {
 
       return result;
     } catch (error) {
-      return {
-        isNewRanking: false,
-        mode,
-        difficulty,
-        score
-      };
+      this.lastSubmissionTime = 0;
+      throw error;
     }
   }
 
