@@ -12,6 +12,7 @@ export interface GameState {
   isPlaying: boolean;
   highScore: number;
   timeLeft?: number;
+  foodEaten?: boolean;
 }
 
 export type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";

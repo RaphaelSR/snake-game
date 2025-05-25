@@ -3,7 +3,8 @@ import React, {
   useContext,
   useReducer,
   useEffect,
-  useCallback
+  useCallback,
+  useRef
 } from "react";
 import type { GameState, Direction, GameSettings } from "@/types";
 import {
@@ -16,6 +17,7 @@ import {
 } from "@/utils/gameLogic";
 import { saveHighScore, getHighScore } from "@/utils/storageManager";
 import { useGameSettings } from "./GameSettingsContext";
+import { useAnalyticsContext } from "./AnalyticsContext";
 import { GAME_MODES, DIFFICULTY_LEVELS } from "@/types/gameSettings";
 
 interface GameContextValue extends GameState {
@@ -98,11 +100,12 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           snake: grownSnake,
           food: generateFood(grownSnake),
           score: newScore,
-          highScore: newHighScore
+          highScore: newHighScore,
+          foodEaten: true
         };
       }
 
-      return { ...state, snake: newSnake };
+      return { ...state, snake: newSnake, foodEaten: false };
     }
 
     case "MOVE_FOOD":
@@ -144,6 +147,11 @@ export function GameProvider({
 }): JSX.Element {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const { settings } = useGameSettings();
+  const analytics = useAnalyticsContext();
+
+  const gameStartTime = useRef<number>(0);
+  const lastPauseTime = useRef<number>(0);
+  const totalPausedTime = useRef<number>(0);
 
   useEffect(() => {
     const savedHighScore = getHighScore();
@@ -194,17 +202,68 @@ export function GameProvider({
     return () => clearInterval(timer);
   }, [state.isPlaying, settings.mode]);
 
+  useEffect(() => {
+    if (state.isGameOver && gameStartTime.current > 0) {
+      const duration =
+        (Date.now() - gameStartTime.current - totalPausedTime.current) / 1000;
+      const isNewHighScore = state.score === state.highScore && state.score > 0;
+
+      analytics.trackGameEnd(state.score, duration, isNewHighScore);
+
+      if (isNewHighScore) {
+        analytics.trackHighScore(state.score);
+      }
+    }
+  }, [state.isGameOver, state.score, state.highScore, analytics]);
+
+  useEffect(() => {
+    if (state.isPlaying && lastPauseTime.current > 0) {
+      totalPausedTime.current += Date.now() - lastPauseTime.current;
+      lastPauseTime.current = 0;
+      analytics.trackGameResumed(state.score);
+    }
+  }, [state.isPlaying, state.score, analytics]);
+
+  useEffect(() => {
+    if (state.foodEaten) {
+      analytics.trackFoodEaten(state.score);
+    }
+  }, [state.foodEaten, state.score, analytics]);
+
   const startGame = useCallback(() => {
+    gameStartTime.current = Date.now();
+    totalPausedTime.current = 0;
+    analytics.trackGameStart();
     dispatch({ type: "START_GAME" });
-  }, []);
+  }, [analytics]);
 
   const pauseGame = useCallback(() => {
+    lastPauseTime.current = Date.now();
+    const duration =
+      (Date.now() - gameStartTime.current - totalPausedTime.current) / 1000;
+    analytics.trackGamePaused(state.score, duration);
     dispatch({ type: "PAUSE_GAME" });
-  }, []);
+  }, [analytics, state.score]);
 
   const restartGame = useCallback(() => {
+    if (state.isPlaying || state.isGameOver) {
+      const duration =
+        (Date.now() - gameStartTime.current - totalPausedTime.current) / 1000;
+      analytics.trackGameEnd(
+        state.score,
+        duration,
+        state.score === state.highScore && state.score > 0
+      );
+    }
     dispatch({ type: "RESTART_GAME", payload: settings });
-  }, [settings]);
+  }, [
+    analytics,
+    settings,
+    state.score,
+    state.highScore,
+    state.isPlaying,
+    state.isGameOver
+  ]);
 
   const changeDirection = useCallback((direction: Direction) => {
     dispatch({ type: "CHANGE_DIRECTION", payload: direction });
