@@ -8,11 +8,7 @@
     "build": "vite build",
     "build:prod": "vite build --mode production",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "deploy": "npm run build:prod && firebase deploy",
-    "firebase:deploy": "firebase deploy --only firestore",
-    "firebase:rules": "firebase deploy --only firestore:rules",
-    "firebase:indexes": "firebase deploy --only firestore:indexes"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.2.0",
