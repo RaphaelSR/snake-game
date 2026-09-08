@@ -9,8 +9,8 @@
     "build:prod": "vite build --mode production",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "build:github": "vite build --base=/snake-game/",
-    "preview:github": "vite preview --base=/snake-game/"
+    "build:github": "vite build --base=./",
+    "preview:github": "vite preview --base=./"
   },
   "dependencies": {
     "react": "^18.2.0",
