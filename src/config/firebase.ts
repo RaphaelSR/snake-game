@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import type { Analytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -16,13 +16,8 @@ const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
 
-let analytics: ReturnType<typeof getAnalytics> | null = null;
-
-isSupported().then((supported) => {
-  if (supported) {
-    analytics = getAnalytics(app);
-  }
-});
+// Consent and page views are managed by the shared personal-site tracker.
+const analytics: Analytics | null = null;
 
 export { app, analytics };
 export const isAnalyticsEnabled = () => analytics !== null;
