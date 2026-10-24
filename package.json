@@ -10,7 +10,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "build:github": "vite build --base=./",
-    "preview:github": "vite preview --base=./"
+    "preview:github": "vite preview --base=./",
+    "test:rules": "node --test tests/firestore.rules.test.mjs",
+    "test": "node --test tests/rankingService.test.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -31,13 +33,15 @@
     "vite": "7.3.7",
     "tailwindcss": "^3.3.6",
     "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32"
+    "postcss": "^8.4.32",
+    "@firebase/rules-unit-testing": "3.0.4"
   },
   "overrides": {
-    "undici": "6.28.1",
+    "undici": "6.29.1",
     "@typescript-eslint/typescript-estree": {
       "minimatch": "9.0.9"
     },
-    "@grpc/grpc-js": "1.14.6"
+    "@grpc/grpc-js": "1.14.6",
+    "postcss-selector-parser": "7.1.6"
   }
 }

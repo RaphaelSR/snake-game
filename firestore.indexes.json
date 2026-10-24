@@ -1,0 +1,27 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "rankings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "difficulty",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "score",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
