@@ -7,9 +7,9 @@ import {
   where,
   orderBy,
   limit,
-  writeBatch,
   serverTimestamp
 } from "firebase/firestore";
+import type { DocumentData, QuerySnapshot } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import type {
   RankingEntry,
@@ -62,68 +62,25 @@ class RankingService {
     }
 
     try {
-      try {
-        const q = query(
-          collection(db, RANKING_CONSTANTS.FIREBASE.COLLECTION),
-          where("mode", "==", mode),
-          where("difficulty", "==", difficulty),
-          orderBy("score", "desc"),
-          limit(RANKING_CONSTANTS.MAX_RANKINGS_PER_MODE)
-        );
+      const q = query(
+        collection(db, RANKING_CONSTANTS.FIREBASE.COLLECTION),
+        where("mode", "==", mode),
+        where("difficulty", "==", difficulty),
+        orderBy("score", "desc"),
+        limit(RANKING_CONSTANTS.MAX_RANKINGS_PER_MODE)
+      );
 
-        const snapshot = await getDocs(q);
-        return this.processSnapshot(snapshot, cacheKey);
-      } catch (indexError) {
-        const q = query(
-          collection(db, RANKING_CONSTANTS.FIREBASE.COLLECTION),
-          where("mode", "==", mode),
-          where("difficulty", "==", difficulty)
-        );
-
-        const snapshot = await getDocs(q);
-        const allEntries: RankingEntry[] = [];
-
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          allEntries.push({
-            id: doc.id,
-            playerName: data.playerName || "Unknown",
-            score:
-              typeof data.score === "number" && !isNaN(data.score)
-                ? data.score
-                : 0,
-            mode: data.mode,
-            difficulty: data.difficulty,
-            timestamp: data.timestamp?.seconds * 1000 || Date.now(),
-            rank: 0
-          });
-        });
-
-        allEntries.sort((a, b) => b.score - a.score);
-
-        const limitedEntries = allEntries
-          .slice(0, RANKING_CONSTANTS.MAX_RANKINGS_PER_MODE)
-          .map((entry, index) => ({
-            ...entry,
-            rank: index + 1
-          }));
-
-        this.cache.set(cacheKey, {
-          data: limitedEntries,
-          timestamp: Date.now()
-        });
-
-        return limitedEntries;
-      }
+      const snapshot = await getDocs(q);
+      return this.processSnapshot(snapshot, cacheKey);
     } catch (error) {
       return [];
     }
   }
 
-  private processSnapshot(snapshot: any, cacheKey: string): RankingEntry[] {
+  private processSnapshot(snapshot: QuerySnapshot<DocumentData>, cacheKey: string): RankingEntry[] {
     const rankings: RankingEntry[] = [];
 
-    snapshot.forEach((doc: any, index: number) => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
       rankings.push({
         id: doc.id,
@@ -133,7 +90,7 @@ class RankingService {
         mode: data.mode,
         difficulty: data.difficulty,
         timestamp: data.timestamp?.seconds * 1000 || Date.now(),
-        rank: index + 1
+        rank: rankings.length + 1
       });
     });
 
@@ -254,7 +211,6 @@ class RankingService {
       );
 
       this.clearCache(mode, difficulty);
-      await this.cleanupOldRankings(mode, difficulty);
 
       const updatedRankings = await this.getRankings(mode, difficulty);
       const userEntry = updatedRankings.find(
@@ -275,53 +231,6 @@ class RankingService {
       this.lastSubmissionTime = 0;
       throw error;
     }
-  }
-
-  private async cleanupOldRankings(
-    mode: GameMode,
-    difficulty: Difficulty
-  ): Promise<void> {
-    try {
-      const q = query(
-        collection(db, RANKING_CONSTANTS.FIREBASE.COLLECTION),
-        where("mode", "==", mode),
-        where("difficulty", "==", difficulty)
-      );
-
-      const snapshot = await getDocs(q);
-
-      if (snapshot.size <= RANKING_CONSTANTS.MAX_RANKINGS_PER_MODE) {
-        return;
-      }
-
-      const allDocs = snapshot.docs.map((doc) => ({
-        doc,
-        data: doc.data(),
-        score: doc.data().score || 0
-      }));
-
-      allDocs.sort((a, b) => {
-        if (b.score !== a.score) {
-          return b.score - a.score;
-        }
-        const aTime = a.data.timestamp?.seconds || 0;
-        const bTime = b.data.timestamp?.seconds || 0;
-        return bTime - aTime;
-      });
-
-      const docsToDelete = allDocs.slice(
-        RANKING_CONSTANTS.MAX_RANKINGS_PER_MODE
-      );
-
-      if (docsToDelete.length > 0) {
-        const batch = writeBatch(db);
-        docsToDelete.forEach(({ doc }) => {
-          batch.delete(doc.ref);
-        });
-
-        await batch.commit();
-      }
-    } catch (error) {}
   }
 
   async getPlayerRank(

@@ -38,6 +38,38 @@ npm run dev
 5. Add a web app and copy the config
 6. Fill the `.env.local` file with your Firebase config values
 
+### Leaderboard access
+
+The browser adds a new document to `rankings` and reads the top ten scores for
+each mode and difficulty. It does not update or delete existing scores.
+
+`firestore.rules` validates new entries, rejects unexpected fields, and denies
+client updates, deletes, individual document reads and unbounded queries.
+`firestore.indexes.json` defines the composite index required by the leaderboard
+query (`mode`, `difficulty`, then descending `score`). The index must be ready
+before publishing the bounded-query client to an existing project.
+
+These files are not deployed by the GitHub Pages workflow. Before applying them,
+review the project's current rules and other collections: the supplied rules
+deny access outside `rankings` and must be merged with any unrelated application
+rules in a shared Firebase project. Existing documents are preserved; the schema
+validation applies only to new writes.
+
+Valid guest submissions remain allowed. These rules do not prove that a score
+was earned, authenticate a player, or enforce the browser's submission cooldown.
+Preventing forged scores and limiting abusive traffic requires a trusted score
+submission service and server-side controls; App Check can provide an additional
+layer. Client Firebase configuration is public and is not an authorization secret.
+
+Test the service and rules locally (Node 22+ and Java 21+):
+
+```bash
+npm test
+npx --yes firebase-tools@15.34.1 emulators:exec --only firestore --project demo-snake-security 'npm run test:rules'
+```
+
+The rules tests use a local demo project, never the production database.
+
 ## 🎯 How to Play
 
 - **Movement**: Use arrow keys or WASD to control the snake

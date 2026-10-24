@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rankings/{rankingId} {
+      function validRanking() {
+        let entry = request.resource.data;
+        return entry.keys().hasAll(['playerName', 'score', 'mode', 'difficulty', 'timestamp'])
+          && entry.keys().hasOnly(['playerName', 'score', 'mode', 'difficulty', 'timestamp'])
+          && entry.playerName is string
+          && entry.playerName.size() >= 2
+          && entry.playerName.size() <= 20
+          && entry.playerName.matches('[a-zA-Z0-9 _.-]+')
+          && entry.score is int
+          && entry.score >= 10
+          && entry.score <= 100000
+          && entry.mode in ['classic', 'infinite', 'moving_food', 'time_attack']
+          && entry.difficulty in ['easy', 'regular', 'hard']
+          && entry.timestamp == request.time;
+      }
+
+      allow list: if request.query.limit != null && request.query.limit <= 10;
+      allow create: if validRanking();
+      allow get, update, delete: if false;
+    }
+  }
+}
