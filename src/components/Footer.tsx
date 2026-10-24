@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
               style={{ color: "var(--color-accent)" }}
             />
             <a
-              href={PROJECT_INFO.REPOSITORY_URL}
+              href={PROJECT_INFO.AUTHOR_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={linkStyle}
